@@ -35,7 +35,7 @@ http
 				let subcategories = fileRead("subCategories");
 				for (let i = 0; i < categories.length; i++) {
 					for (let j = 0; j < subcategories.length; j++) {
-						if (categories[i].category_id == subcategories[j].category_id) {
+						if (categories[i].categoryId == subcategories[j].categoryId) {
 							categories[i]["subCategories"] = subcategories[j];
 							delete categories[i]["subCategories"].categoryId;
 						}
@@ -53,9 +53,17 @@ http
 				}
 				if (!query) return res.end("[]");
 				let result = [];
-				for (let i in products)
-					for (let j in query)
-						if (products[i][j] == query[j]) result.push(products[i]);
+				for (let i in products) {
+					let a = 1;
+					for (let j in query) {
+						console.log(products[i][j], query[j]);
+						if (products[i][j] != query[j]) {
+							a = 0;
+						}
+					}
+					if (a) result.push(products[i]);
+				}
+				console.log(result);
 				return res.end(JSON.stringify(result));
 			}
 		} else if (req.method == "POST") {
@@ -102,7 +110,6 @@ http
 					for (let i in subcategories) {
 						if (subcategories[i].subCategoryId == reqId) {
 							subcategories[i] = {
-								...products[i],
 								subCategoryId: +reqId,
 								...data,
 							};
@@ -118,7 +125,6 @@ http
 					for (let i in categories) {
 						if (categories[i].categoryId == reqId) {
 							categories[i] = {
-								...products[i],
 								categoryId: +reqId,
 								...data,
 							};
